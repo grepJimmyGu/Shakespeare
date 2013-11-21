@@ -1,0 +1,399 @@
+\documentclass{article}\usepackage[]{graphicx}\usepackage[]{color}
+%% maxwidth is the original width if it is less than linewidth
+%% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+  \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+ \def\at@end@of@kframe{}%
+ \ifinner\ifhmode%
+  \def\at@end@of@kframe{\end{minipage}}%
+  \begin{minipage}{\columnwidth}%
+ \fi\fi%
+ \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+ \colorbox{shadecolor}{##1}\hskip-\fboxsep
+     % There is no \\@totalrightmargin, so:
+     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed%
+ \at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}
+\usepackage[sc]{mathpazo}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\geometry{verbose,tmargin=2.5cm,bmargin=2.5cm,lmargin=1.5cm,rmargin=1.5cm}
+\setcounter{secnumdepth}{2}
+\setcounter{tocdepth}{2}
+\usepackage{url}
+\usepackage[unicode=true,pdfusetitle,
+ bookmarks=true,bookmarksnumbered=true,bookmarksopen=true,bookmarksopenlevel=2,
+ breaklinks=false,pdfborder={0 0 1},backref=false,colorlinks=false]
+ {hyperref}
+\hypersetup{
+ pdfstartview={XYZ null null 1}}
+\usepackage{breakurl}
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\begin{document}
+
+
+
+\title{Shakespeare from a Statistician's Point}
+
+
+\author{Jinze Gu}
+
+\maketitle
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{# Read the file into R}
+\hlstd{ShakespeareOriginal} \hlkwb{<-} \hlkwd{readLines}\hlstd{(}\hlstr{"~/Shakespeare.txt"}\hlstd{)}
+\hlcom{# Now I need to clean up the}
+\hlstd{Shakespeare_tmp} \hlkwb{<-} \hlkwd{paste}\hlstd{(ShakespeareOriginal,} \hlkwc{collapse} \hlstd{=} \hlstr{"\textbackslash{}n"}\hlstd{)}
+\hlcom{# You need to unlist it here, or it will form a list, I just eliminated the}
+\hlcom{# redundant<<copyright...>> part. The following command helps to clean the data and eliminate}
+\hlcom{# some extra information that I don't need in my analysis such as 'stage direction','<<Extra}
+\hlcom{# information about copyright>>'.}
+\hlstd{Shakespeare_tmp1} \hlkwb{<-} \hlkwd{unlist}\hlstd{(}\hlkwd{strsplit}\hlstd{(}\hlkwd{gsub}\hlstd{(}\hlstr{"<<.*?>>"}\hlstd{,} \hlstr{""}\hlstd{, Shakespeare_tmp),} \hlkwc{split} \hlstd{=} \hlstr{"\textbackslash{}n"}\hlstd{))}
+\hlstd{Shakespeare_tmp2} \hlkwb{<-} \hlkwd{gsub}\hlstd{(}\hlstr{"^[[:blank:]]\{2,\}Enter"}\hlstd{,} \hlstr{""}\hlstd{, Shakespeare_tmp1,} \hlkwc{ignore.case} \hlstd{=} \hlnum{1}\hlstd{)}
+\hlstd{Shakespeare_tmp3} \hlkwb{<-} \hlkwd{gsub}\hlstd{(}\hlstr{"\textbackslash{}\textbackslash{}[.*?\textbackslash{}\textbackslash{}]"}\hlstd{,} \hlstr{""}\hlstd{, Shakespeare_tmp2,} \hlkwc{ignore.case} \hlstd{=} \hlnum{1}\hlstd{)}
+\hlstd{Shakespeare_tmp4} \hlkwb{<-} \hlkwd{gsub}\hlstd{(}\hlstr{"^[[:blank:]]\{2,\}Re[-]*enter"}\hlstd{,} \hlstr{""}\hlstd{, Shakespeare_tmp3,} \hlkwc{ignore.case} \hlstd{=} \hlnum{1}\hlstd{)}
+\hlstd{Shakespeare_tmp5} \hlkwb{<-} \hlkwd{gsub}\hlstd{(}\hlstr{"EPILOGUE.*"}\hlstd{,} \hlstr{""}\hlstd{, Shakespeare_tmp4,} \hlkwc{ignore.case} \hlstd{=} \hlnum{0}\hlstd{)}
+\hlcom{# This is the 'cleaned' file}
+\hlstd{Shakespeare} \hlkwb{<-} \hlkwd{gsub}\hlstd{(}\hlstr{"Exeunt.*"}\hlstd{,} \hlstr{""}\hlstd{, Shakespeare_tmp5,} \hlkwc{ignore.case} \hlstd{=} \hlnum{0}\hlstd{)}
+\hlcom{# I use the year as the start mark of the play}
+\hlstd{plays} \hlkwb{<-} \hlkwd{grep}\hlstd{(}\hlstr{"^[[:digit:]]\{4\}$"}\hlstd{, Shakespeare)}
+\hlcom{# I use the 'THE END' as the end mark of the play}
+\hlstd{Ends} \hlkwb{<-} \hlkwd{grep}\hlstd{(}\hlstr{"THE END"}\hlstd{, Shakespeare)}
+\hlcom{# We don't want to include the sonnet and the final sing.}
+\hlstd{infor} \hlkwb{<-} \hlkwd{data.frame}\hlstd{(}\hlkwc{Starts} \hlstd{= plays[}\hlnum{2}\hlopt{:}\hlnum{37}\hlstd{],} \hlkwc{Ends} \hlstd{= Ends[}\hlnum{2}\hlopt{:}\hlnum{37}\hlstd{])}
+\hlcom{# Here I save all of the play in a playlist.}
+\hlstd{Playlist} \hlkwb{<-} \hlkwd{list}\hlstd{(}\hlstr{""}\hlstd{)}
+\hlkwa{for} \hlstd{(i} \hlkwa{in} \hlnum{1}\hlopt{:}\hlnum{36}\hlstd{) \{}
+    \hlstd{playstarts} \hlkwb{<-} \hlstd{infor[i,} \hlnum{1}\hlstd{]}
+    \hlstd{playends} \hlkwb{<-} \hlstd{infor[i,} \hlnum{2}\hlstd{]}
+    \hlstd{Playlist[[i]]} \hlkwb{<-} \hlstd{Shakespeare[playstarts}\hlopt{:}\hlstd{playends]}
+\hlstd{\}}
+\hlcom{# These are the years of the play}
+\hlstd{years} \hlkwb{<-} \hlstd{Shakespeare[infor[,} \hlnum{1}\hlstd{]]}
+\hlcom{# These are the names of the play, you can get the name of the play by assigning x as}
+\hlcom{# Playlist[[k]] where k is an integer from 1 to 36. We need to call the funcion Shakes}
+\hlstd{name} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{x}\hlstd{) \{}
+    \hlstd{tmp} \hlkwb{<-} \hlkwd{grep}\hlstd{(}\hlstr{"^([[:upper:]]+[[:punct:]]*[ \textbackslash{}t]*[[:upper:]]*[ \textbackslash{}t]*)\{1,\}[[:upper:]]+$"}\hlstd{, x)}
+    \hlstd{tmp1} \hlkwb{<-} \hlkwd{grep}\hlstd{(}\hlstr{"^by William Shakespeare"}\hlstd{, x)}
+    \hlkwa{for} \hlstd{(i} \hlkwa{in} \hlstd{tmp) \{}
+        \hlkwa{if} \hlstd{(i} \hlopt{<} \hlstd{tmp1) \{}
+            \hlcom{# Since I notice that name always come before 'by William Shakespeare'}
+            \hlkwd{return}\hlstd{(x[i])}
+        \hlstd{\}}
+    \hlstd{\}}
+\hlstd{\}}
+\hlstd{Name} \hlkwb{<-} \hlkwd{unlist}\hlstd{(}\hlkwd{lapply}\hlstd{(Playlist, name))}
+\hlcom{# Number of ACTS}
+\hlstd{Act} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{x}\hlstd{) \{}
+    \hlstd{act} \hlkwb{<-} \hlkwd{grep}\hlstd{(}\hlstr{"^[ \textbackslash{}t]*A[Cc][Tt][^[:alpha:]][ \textbackslash{}t]*[[:punct:]]*[I|II|III|IV|V|VI]*[[:digit:]]*"}\hlstd{,}
+        \hlstd{x)}
+    \hlstd{Max} \hlkwb{<-} \hlkwd{max}\hlstd{(act)}
+    \hlkwa{if} \hlstd{(}\hlkwd{substring}\hlstd{(x[Max],} \hlnum{5}\hlstd{,} \hlnum{7}\hlstd{)} \hlopt{==} \hlstr{"III"}\hlstd{) \{}
+        \hlstd{number} \hlkwb{<-} \hlkwd{substring}\hlstd{(x[Max],} \hlnum{5}\hlstd{,} \hlnum{7}\hlstd{)}
+    \hlstd{\}} \hlkwa{else} \hlstd{\{}
+        \hlkwa{if} \hlstd{(}\hlkwd{substring}\hlstd{(x[Max],} \hlnum{5}\hlstd{,} \hlnum{5}\hlstd{)} \hlopt{==} \hlnum{5}\hlstd{) \{}
+            \hlstd{number} \hlkwb{<-} \hlkwd{substring}\hlstd{(x[Max],} \hlnum{5}\hlstd{,} \hlnum{5}\hlstd{)}
+        \hlstd{\}} \hlkwa{else} \hlstd{\{}
+            \hlstd{number} \hlkwb{<-} \hlkwd{substring}\hlstd{(x[Max],} \hlnum{5}\hlstd{,} \hlnum{6}\hlstd{)}
+        \hlstd{\}}
+    \hlstd{\}}
+    \hlkwd{return}\hlstd{(number)}
+\hlstd{\}}
+\hlstd{NumberAct} \hlkwb{<-} \hlkwd{unlist}\hlstd{(}\hlkwd{lapply}\hlstd{(Playlist, Act))}
+\hlcom{# Number of Scenes}
+\hlstd{Scene} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{x}\hlstd{) \{}
+    \hlstd{scene} \hlkwb{<-} \hlkwd{grep}\hlstd{(}\hlstr{"scene[ _]+[a-z0-9]+[.]*$"}\hlstd{, x,} \hlkwc{ignore.case} \hlstd{=} \hlnum{TRUE}\hlstd{)}
+    \hlstd{number} \hlkwb{<-} \hlkwd{length}\hlstd{(scene)}
+    \hlkwd{return}\hlstd{(number)}
+\hlstd{\}}
+\hlstd{NumberScene} \hlkwb{<-} \hlkwd{unlist}\hlstd{(}\hlkwd{lapply}\hlstd{(Playlist, Scene))}
+\hlcom{# The bodylist of all of the plays}
+\hlstd{Bl} \hlkwb{<-} \hlkwa{function}\hlstd{() \{}
+    \hlstd{Bodylist} \hlkwb{<-} \hlkwd{list}\hlstd{(}\hlstr{""}\hlstd{)}
+    \hlkwa{for} \hlstd{(i} \hlkwa{in} \hlnum{1}\hlopt{:}\hlnum{36}\hlstd{) \{}
+        \hlstd{bodystarts} \hlkwb{<-} \hlkwd{grep}\hlstd{(}\hlstr{"S[Cc][Ee][Nn][Ee][[:punct:]]"}\hlstd{, Playlist[[i]])}
+        \hlstd{bodyends} \hlkwb{<-} \hlkwd{grep}\hlstd{(}\hlstr{"THE END"}\hlstd{, Playlist[[i]])}
+        \hlstd{Bodylist[[i]]} \hlkwb{<-} \hlstd{Playlist[[i]][bodystarts}\hlopt{:}\hlstd{bodyends]}
+    \hlstd{\}}
+    \hlkwd{return}\hlstd{(Bodylist)}
+\hlstd{\}}
+\hlstd{Bodylist} \hlkwb{<-} \hlkwd{Bl}\hlstd{()}
+\hlcom{# Metainfor:}
+\hlstd{Meta} \hlkwb{<-} \hlkwd{data.frame}\hlstd{(}\hlkwc{Years} \hlstd{= years, Name, NumberAct, NumberScene)}
+\hlcom{# Dialogue Chunk:}
+\hlstd{Chunk} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{x}\hlstd{) \{}
+    \hlkwa{if} \hlstd{(x} \hlopt{!=} \hlnum{4}\hlstd{) \{}
+        \hlstd{chunklist} \hlkwb{<-} \hlkwd{list}\hlstd{(}\hlstr{""}\hlstd{)}
+        \hlstd{chunk} \hlkwb{<-} \hlkwd{grep}\hlstd{(}\hlstr{"(^[ \textbackslash{}t]\{1,2\}[[:upper:]]+[ \textbackslash{}t]*[[:alpha:]]*[ \textbackslash{}t]*[[:alpha:]]+\textbackslash{}\textbackslash{}.)(.*)"}\hlstd{, Playlist[[x]])}
+        \hlstd{len} \hlkwb{<-} \hlkwd{length}\hlstd{(}\hlkwd{grep}\hlstd{(}\hlstr{"(^[ \textbackslash{}t]\{1,2\}[[:upper:]]+[ \textbackslash{}t]*[[:alpha:]]*[ \textbackslash{}t]*[[:alpha:]]+\textbackslash{}\textbackslash{}.)(.*)"}\hlstd{,}
+            \hlstd{Playlist[[x]]))}
+        \hlkwa{for} \hlstd{(i} \hlkwa{in} \hlnum{1}\hlopt{:}\hlkwd{as.numeric}\hlstd{(len} \hlopt{-} \hlnum{1}\hlstd{)) \{}
+            \hlstd{tmp1} \hlkwb{<-} \hlstd{chunk[i]}
+            \hlstd{tmp2} \hlkwb{<-} \hlstd{chunk[}\hlkwd{as.numeric}\hlstd{(i} \hlopt{+} \hlnum{1}\hlstd{)]}
+            \hlstd{chunklist[[i]]} \hlkwb{<-} \hlstd{Playlist[[x]][tmp1}\hlopt{:}\hlkwd{as.numeric}\hlstd{(tmp2} \hlopt{-} \hlnum{1}\hlstd{)]}
+        \hlstd{\}}
+        \hlstd{tmp3} \hlkwb{<-} \hlstd{chunk[}\hlkwd{as.numeric}\hlstd{(len)]}
+        \hlstd{tmp4} \hlkwb{<-} \hlkwd{grep}\hlstd{(}\hlstr{"THE END"}\hlstd{, Playlist[[x]])}
+        \hlstd{chunklist[[}\hlkwd{as.numeric}\hlstd{(len)]]} \hlkwb{<-} \hlstd{Playlist[[x]][tmp3}\hlopt{:}\hlstd{tmp4]}
+    \hlstd{\}} \hlkwa{else} \hlstd{\{}
+        \hlstd{chunklist} \hlkwb{<-} \hlkwd{list}\hlstd{(}\hlstr{""}\hlstd{)}
+        \hlstd{chunk} \hlkwb{<-} \hlkwd{grep}\hlstd{(}\hlstr{"(^[[:upper:]]+[ \textbackslash{}t]*[[:alpha:]]*[ \textbackslash{}t]*[[:alpha:]]+\textbackslash{}\textbackslash{}.)(.*)"}\hlstd{, Playlist[[x]])}
+        \hlstd{len} \hlkwb{<-} \hlkwd{length}\hlstd{(}\hlkwd{grep}\hlstd{(}\hlstr{"(^[[:upper:]]+[ \textbackslash{}t]*[[:alpha:]]*[ \textbackslash{}t]*[[:alpha:]]+\textbackslash{}\textbackslash{}.)(.*)"}\hlstd{, Playlist[[x]]))}
+        \hlkwa{for} \hlstd{(i} \hlkwa{in} \hlnum{1}\hlopt{:}\hlkwd{as.numeric}\hlstd{(len} \hlopt{-} \hlnum{1}\hlstd{)) \{}
+            \hlstd{tmp1} \hlkwb{<-} \hlstd{chunk[i]}
+            \hlstd{tmp2} \hlkwb{<-} \hlstd{chunk[}\hlkwd{as.numeric}\hlstd{(i} \hlopt{+} \hlnum{1}\hlstd{)]}
+            \hlstd{chunklist[[i]]} \hlkwb{<-} \hlstd{Playlist[[x]][tmp1}\hlopt{:}\hlkwd{as.numeric}\hlstd{(tmp2} \hlopt{-} \hlnum{1}\hlstd{)]}
+        \hlstd{\}}
+        \hlstd{tmp3} \hlkwb{<-} \hlstd{chunk[}\hlkwd{as.numeric}\hlstd{(len)]}
+        \hlstd{tmp4} \hlkwb{<-} \hlkwd{grep}\hlstd{(}\hlstr{"THE END"}\hlstd{, Playlist[[x]])}
+        \hlstd{chunklist[[}\hlkwd{as.numeric}\hlstd{(len)]]} \hlkwb{<-} \hlstd{Playlist[[x]][tmp3}\hlopt{:}\hlstd{tmp4]}
+    \hlstd{\}}
+    \hlkwd{return}\hlstd{(chunklist)}
+\hlstd{\}}
+\hlcom{# Output the chunklist}
+\hlstd{Dialogue} \hlkwb{<-} \hlkwa{function}\hlstd{() \{}
+    \hlstd{Dialoguelist} \hlkwb{<-} \hlkwd{list}\hlstd{(}\hlstr{""}\hlstd{)}
+    \hlkwa{for} \hlstd{(i} \hlkwa{in} \hlnum{1}\hlopt{:}\hlnum{36}\hlstd{) \{}
+        \hlstd{Dialoguelist[[i]]} \hlkwb{<-} \hlkwd{Chunk}\hlstd{(i)}
+    \hlstd{\}}
+    \hlkwd{return}\hlstd{(Dialoguelist)}
+\hlstd{\}}
+\hlstd{Chunklist} \hlkwb{<-} \hlkwd{Dialogue}\hlstd{()}
+\hlcom{# Unique Speakers}
+\hlstd{numberofspeakers} \hlkwb{<-} \hlkwa{function}\hlstd{() \{}
+    \hlstd{number} \hlkwb{<-} \hlkwd{vector}\hlstd{(}\hlstr{"numeric"}\hlstd{,} \hlnum{36}\hlstd{)}
+    \hlkwa{for} \hlstd{(i} \hlkwa{in} \hlnum{1}\hlopt{:}\hlnum{36}\hlstd{) \{}
+        \hlkwa{if} \hlstd{(i} \hlopt{!=} \hlnum{4}\hlstd{) \{}
+            \hlstd{test} \hlkwb{<-} \hlkwd{grep}\hlstd{(}\hlstr{"(^[ \textbackslash{}t]\{1,2\}[[:upper:]]+[ \textbackslash{}t]*[[:alpha:]]*[ \textbackslash{}t]*[[:alpha:]]+\textbackslash{}\textbackslash{}.)(.*)"}\hlstd{,}
+                \hlstd{Playlist[[i]],} \hlkwc{value} \hlstd{=} \hlnum{1}\hlstd{)}
+            \hlstd{test1} \hlkwb{<-} \hlkwd{gsub}\hlstd{(}\hlstr{"(^[ \textbackslash{}t]\{1,2\}[[:upper:]]+[ \textbackslash{}t]*[[:alpha:]]*[ \textbackslash{}t]*[[:alpha:]]+\textbackslash{}\textbackslash{}.)(.*)"}\hlstd{,}
+                \hlstr{"\textbackslash{}\textbackslash{}1"}\hlstd{, test)}
+            \hlstd{speakers} \hlkwb{<-} \hlkwd{length}\hlstd{(}\hlkwd{unique}\hlstd{(test1))}  \hlcom{#I have included something that we don't want}
+            \hlstd{number[i]} \hlkwb{<-} \hlstd{speakers}
+        \hlstd{\}} \hlkwa{else} \hlstd{\{}
+            \hlstd{test} \hlkwb{<-} \hlkwd{grep}\hlstd{(}\hlstr{"(^[[:upper:]]+[ \textbackslash{}t]*[[:upper:]]*[ \textbackslash{}t]*[[:upper:]]+\textbackslash{}\textbackslash{}.)(.*)"}\hlstd{, Playlist[[i]],}
+                \hlkwc{value} \hlstd{=} \hlnum{1}\hlstd{)}
+            \hlstd{test1} \hlkwb{<-} \hlkwd{gsub}\hlstd{(}\hlstr{"(^[[:upper:]]+[ \textbackslash{}t]*[[:upper:]]*[ \textbackslash{}t]*[[:upper:]]+\textbackslash{}\textbackslash{}.)(.*)"}\hlstd{,} \hlstr{"\textbackslash{}\textbackslash{}1"}\hlstd{, test)}
+            \hlstd{speakers} \hlkwb{<-} \hlkwd{length}\hlstd{(}\hlkwd{unique}\hlstd{(test1))} \hlopt{-} \hlnum{1}  \hlcom{#I have included one redundant element that I noticed}
+            \hlstd{number[i]} \hlkwb{<-} \hlstd{speakers}
+        \hlstd{\}}
+    \hlstd{\}}
+    \hlkwd{return}\hlstd{(number)}
+\hlstd{\}}
+\hlstd{Numberofspeakers} \hlkwb{<-} \hlkwd{numberofspeakers}\hlstd{()}
+\hlcom{# The number of spoken chunks}
+\hlstd{numberofchunks} \hlkwb{<-} \hlkwa{function}\hlstd{() \{}
+    \hlstd{number} \hlkwb{<-} \hlkwd{vector}\hlstd{(}\hlstr{"numeric"}\hlstd{,} \hlnum{36}\hlstd{)}
+    \hlkwa{for} \hlstd{(i} \hlkwa{in} \hlnum{1}\hlopt{:}\hlnum{36}\hlstd{) \{}
+        \hlkwa{if} \hlstd{(i} \hlopt{!=} \hlnum{4}\hlstd{) \{}
+            \hlstd{test} \hlkwb{<-} \hlkwd{grep}\hlstd{(}\hlstr{"(^[ \textbackslash{}t]\{1,2\}[[:upper:]]+[ \textbackslash{}t]*[[:alpha:]]*[ \textbackslash{}t]*[[:alpha:]]+\textbackslash{}\textbackslash{}.)(.*)"}\hlstd{,}
+                \hlstd{Playlist[[i]],} \hlkwc{value} \hlstd{=} \hlnum{1}\hlstd{)}
+            \hlstd{chunks} \hlkwb{<-} \hlkwd{length}\hlstd{(}\hlkwd{unique}\hlstd{(test))}  \hlcom{#I have included something that we don't want}
+            \hlstd{number[i]} \hlkwb{<-} \hlstd{chunks}
+        \hlstd{\}} \hlkwa{else} \hlstd{\{}
+            \hlstd{test} \hlkwb{<-} \hlkwd{grep}\hlstd{(}\hlstr{"(^[[:upper:]]+[ \textbackslash{}t]*[[:upper:]]*[ \textbackslash{}t]*[[:upper:]]+\textbackslash{}\textbackslash{}.)(.*)"}\hlstd{, Playlist[[i]],}
+                \hlkwc{value} \hlstd{=} \hlnum{1}\hlstd{)}
+            \hlstd{chunks} \hlkwb{<-} \hlkwd{length}\hlstd{(test)} \hlopt{-} \hlnum{1}  \hlcom{#I have included one redundant element that I noticed}
+            \hlstd{number[i]} \hlkwb{<-} \hlstd{chunks}
+        \hlstd{\}}
+    \hlstd{\}}
+    \hlkwd{return}\hlstd{(number)}
+\hlstd{\}}
+\hlstd{Numberofspeeches} \hlkwb{<-} \hlkwd{numberofchunks}\hlstd{()}
+\hlcom{# Average sentences and words}
+\hlstd{Sentence} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{x}\hlstd{) \{}
+    \hlstd{s} \hlkwb{<-} \hlkwd{paste}\hlstd{(x,} \hlkwc{collapse} \hlstd{=} \hlstr{"\textbackslash{}n"}\hlstd{)}
+    \hlstd{tmp} \hlkwb{<-} \hlkwd{gregexpr}\hlstd{(}\hlstr{"[[:lower:]][.?!]"}\hlstd{, s)}
+    \hlstd{Len} \hlkwb{<-} \hlkwd{length}\hlstd{(}\hlkwd{unlist}\hlstd{(tmp))}
+    \hlkwd{return}\hlstd{(Len)}
+\hlstd{\}}  \hlcom{#The function is used to count the number of sentences}
+\hlstd{Word} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{x}\hlstd{) \{}
+    \hlstd{w} \hlkwb{<-} \hlkwd{gregexpr}\hlstd{(}\hlstr{"([[:alpha:]]+[']*[[:alpha:]]*)"}\hlstd{, x)}
+    \hlstd{tmp} \hlkwb{<-} \hlkwd{as.numeric}\hlstd{(}\hlkwd{length}\hlstd{(}\hlkwd{unlist}\hlstd{(w))} \hlopt{-} \hlnum{1}\hlstd{)}
+    \hlkwd{return}\hlstd{(tmp)}
+\hlstd{\}}  \hlcom{#The function is used to count the number of words}
+\hlcom{# TotalS generates a list of lists of the number of sentences for each chunk}
+\hlstd{TotalS} \hlkwb{<-} \hlkwa{function}\hlstd{() \{}
+    \hlstd{TSentences} \hlkwb{<-} \hlkwd{list}\hlstd{(}\hlstr{""}\hlstd{)}
+    \hlkwa{for} \hlstd{(j} \hlkwa{in} \hlnum{1}\hlopt{:}\hlnum{36}\hlstd{) \{}
+        \hlstd{TSentences[j]} \hlkwb{<-} \hlkwd{list}\hlstd{(}\hlstr{""}\hlstd{)}
+        \hlkwa{for} \hlstd{(i} \hlkwa{in} \hlnum{1}\hlopt{:}\hlkwd{length}\hlstd{(Chunklist[[j]])) \{}
+            \hlstd{TSentences[[j]][[i]]} \hlkwb{<-} \hlkwd{Sentence}\hlstd{(Chunklist[[j]][[i]])}
+        \hlstd{\}}
+    \hlstd{\}}
+    \hlkwd{return}\hlstd{(TSentences)}
+\hlstd{\}}
+\hlstd{TSentences} \hlkwb{<-} \hlkwd{TotalS}\hlstd{()}
+\hlcom{# TotalW generates a list of lists of the number of words for each chunk}
+\hlstd{TotalW} \hlkwb{<-} \hlkwa{function}\hlstd{() \{}
+    \hlstd{TWords} \hlkwb{<-} \hlkwd{list}\hlstd{(}\hlstr{""}\hlstd{)}
+    \hlkwa{for} \hlstd{(j} \hlkwa{in} \hlnum{1}\hlopt{:}\hlnum{36}\hlstd{) \{}
+        \hlstd{TWords[j]} \hlkwb{<-} \hlkwd{list}\hlstd{(}\hlstr{""}\hlstd{)}
+        \hlkwa{for} \hlstd{(i} \hlkwa{in} \hlnum{1}\hlopt{:}\hlkwd{length}\hlstd{(Chunklist[[j]])) \{}
+            \hlstd{TWords[[j]][[i]]} \hlkwb{<-} \hlkwd{Word}\hlstd{(Chunklist[[j]][[i]])}
+        \hlstd{\}}
+    \hlstd{\}}
+    \hlkwd{return}\hlstd{(TWords)}
+\hlstd{\}}
+\hlstd{TWords} \hlkwb{<-} \hlkwd{TotalW}\hlstd{()}
+\hlcom{# The number of words per chunk is:}
+\hlstd{wperchunk} \hlkwb{<-} \hlkwa{function}\hlstd{() \{}
+    \hlstd{vec} \hlkwb{<-} \hlkwd{vector}\hlstd{(}\hlstr{"numeric"}\hlstd{,} \hlnum{36}\hlstd{)}
+    \hlstd{vec1} \hlkwb{<-} \hlkwd{vector}\hlstd{(}\hlstr{"numeric"}\hlstd{,} \hlnum{36}\hlstd{)}
+    \hlkwa{for} \hlstd{(i} \hlkwa{in} \hlnum{1}\hlopt{:}\hlnum{36}\hlstd{) \{}
+        \hlstd{vec[i]} \hlkwb{<-} \hlkwd{mean}\hlstd{(}\hlkwd{as.numeric}\hlstd{(TWords[[i]]))}
+        \hlstd{vec1[i]} \hlkwb{<-} \hlkwd{sd}\hlstd{(}\hlkwd{as.numeric}\hlstd{(TWords[[i]]))}
+    \hlstd{\}}
+    \hlkwd{return}\hlstd{(}\hlkwd{cbind}\hlstd{(vec, vec1))}
+\hlstd{\}}
+\hlcom{# The number of sentences per chunk is:}
+\hlstd{sperchunk} \hlkwb{<-} \hlkwa{function}\hlstd{() \{}
+    \hlstd{vec} \hlkwb{<-} \hlkwd{vector}\hlstd{(}\hlstr{"numeric"}\hlstd{,} \hlnum{36}\hlstd{)}
+    \hlstd{vec1} \hlkwb{<-} \hlkwd{vector}\hlstd{(}\hlstr{"numeric"}\hlstd{,} \hlnum{36}\hlstd{)}
+    \hlkwa{for} \hlstd{(i} \hlkwa{in} \hlnum{1}\hlopt{:}\hlnum{36}\hlstd{) \{}
+        \hlstd{vec[i]} \hlkwb{<-} \hlkwd{mean}\hlstd{(}\hlkwd{as.numeric}\hlstd{(TSentences[[i]]))}
+        \hlstd{vec1[i]} \hlkwb{<-} \hlkwd{sd}\hlstd{(}\hlkwd{as.numeric}\hlstd{(TSentences[[i]]))}
+    \hlstd{\}}
+    \hlkwd{return}\hlstd{(}\hlkwd{cbind}\hlstd{(vec, vec1))}
+\hlstd{\}}
+\hlstd{perchunk} \hlkwb{<-} \hlkwd{data.frame}\hlstd{(}\hlkwc{Wordperspeech} \hlstd{=} \hlkwd{wperchunk}\hlstd{()[,} \hlnum{1}\hlstd{],} \hlkwc{`Word(sd)`} \hlstd{=} \hlkwd{wperchunk}\hlstd{()[,} \hlnum{2}\hlstd{],} \hlkwc{Sentenceperspeech} \hlstd{=} \hlkwd{sperchunk}\hlstd{()[,}
+    \hlnum{1}\hlstd{],} \hlkwc{`Sentence(sd)`} \hlstd{=} \hlkwd{sperchunk}\hlstd{()[,} \hlnum{2}\hlstd{])}
+\hlcom{# To sum up all of the information we have}
+\hlstd{summary} \hlkwb{<-} \hlkwd{cbind}\hlstd{(Meta, Numberofspeakers, Numberofspeeches, perchunk)}
+\hlstd{summary}
+\end{alltt}
+\begin{verbatim}
+##    Years                                     Name NumberAct NumberScene Numberofspeakers
+## 1   1603                 ALLS WELL THAT ENDS WELL        V           23               23
+## 2   1607      THE TRAGEDY OF ANTONY AND CLEOPATRA         5          41               60
+## 3   1601                           AS YOU LIKE IT        V.          22               27
+## 4   1593                     THE COMEDY OF ERRORS        V.          11               23
+## 5   1608                THE TRAGEDY OF CORIOLANUS        V.          29               62
+## 6   1609                                CYMBELINE        V.          27               40
+## 7   1604 THE TRAGEDY OF HAMLET, PRINCE OF DENMARK        V.          20               50
+## 8   1598  THE FIRST PART OF KING HENRY THE FOURTH        V.          19               48
+## 9   1598             SECOND PART OF KING HENRY IV        V.          19               50
+## 10  1599         THE LIFE OF KING HENRY THE FIFTH        V.          23               51
+## 11  1592        THE FIRST PART OF HENRY THE SIXTH        V.          27               53
+## 12  1591  THE SECOND PART OF KING HENRY THE SIXTH        V.          24               66
+## 13  1591   THE THIRD PART OF KING HENRY THE SIXTH        V.          28               47
+## 14  1611                    KING HENRY THE EIGHTH        V.          17               48
+## 15  1597                                KING JOHN        V.          16               27
+## 16  1599             THE TRAGEDY OF JULIUS CAESAR        V.          18               59
+## 17  1606                 THE TRAGEDY OF KING LEAR        V.          26               33
+## 18  1595                     LOVE'S LABOUR'S LOST        V.           9               20
+## 19  1606                   THE TRAGEDY OF MACBETH        V.          29               52
+## 20  1605                      MEASURE FOR MEASURE        V.          17               23
+## 21  1597                   THE MERCHANT OF VENICE        V.          20               26
+## 22  1601               THE MERRY WIVES OF WINDSOR        V.          23               28
+## 23  1596                A MIDSUMMER NIGHT'S DREAM        V.           9               33
+## 24  1599                   MUCH ADO ABOUT NOTHING        V.          17               32
+## 25  1605   THE TRAGEDY OF OTHELLO, MOOR OF VENICE        V.          15               36
+## 26  1596                  KING RICHARD THE SECOND        V.          19               36
+## 27  1593                         KING RICHARD III        V.          25               65
+## 28  1595          THE TRAGEDY OF ROMEO AND JULIET        V.          24               53
+## 29  1594                  THE TAMING OF THE SHREW        V.          14               38
+## 30  1612                              THE TEMPEST        V.           9               19
+## 31  1608              THE LIFE OF TIMON OF ATHENS        V.          17               57
+## 32  1594          THE TRAGEDY OF TITUS ANDRONICUS        V.          14               28
+## 33  1602      THE HISTORY OF TROILUS AND CRESSIDA        V.          24               29
+## 34  1602         TWELFTH NIGHT; OR, WHAT YOU WILL        V.          18               23
+## 35  1595              THE TWO GENTLEMEN OF VERONA        V.          20               17
+## 36  1611                        THE WINTER'S TALE        V.          15               34
+##    Numberofspeeches Wordperspeech Word.sd. Sentenceperspeech Sentence.sd.
+## 1               932         25.18    30.62             1.819        1.609
+## 2              1170         21.42    27.01             1.985        1.880
+## 3               804         27.30    36.14             1.880        1.846
+## 4               611         25.47    37.52             1.737        1.563
+## 5              1102         25.44    36.60             1.898        1.751
+## 6               854         32.61    47.79             2.513        3.258
+## 7              1130         26.97    45.86             3.334        2.898
+## 8               766         32.32    49.81             3.558        3.156
+## 9               897         29.65    50.24             2.161        2.280
+## 10              739         36.16    63.57             1.982        2.307
+## 11              647         33.86    39.57             2.204        2.084
+## 12              789         32.76    45.49             2.068        2.074
+## 13              816         30.50    47.57             2.005        2.354
+## 14              703         35.20    48.08             2.214        2.161
+## 15              547         38.69    49.03             2.224        2.065
+## 16              800         24.64    37.90             2.189        2.259
+## 17             1066         24.31    30.73             3.480        2.544
+## 18             1043         20.88    37.44             1.707        2.125
+## 19              650         26.62    35.03             2.382        2.533
+## 20              892         24.54    30.93             1.855        1.660
+## 21              631         34.11    44.28             2.139        2.528
+## 22             1014         22.02    28.57             1.847        1.809
+## 23              503         33.12    40.32             2.308        2.276
+## 24              963         22.17    29.48             2.942        1.804
+## 25             1178         22.11    33.59             2.154        2.254
+## 26              551         41.14    53.01             2.393        2.386
+## 27             1072         27.85    40.50             1.960        2.094
+## 28              832         29.57    44.73             3.767        3.498
+## 29              891         23.84    31.71             1.837        1.649
+## 30              639         26.11    36.73             1.981        1.705
+## 31              756         24.84    38.76             2.128        2.517
+## 32              564         37.05    47.53             2.314        2.309
+## 33             1133         23.06    38.18             1.969        1.915
+## 34              920         21.94    28.07             1.778        1.592
+## 35              856         20.39    35.25             1.592        1.762
+## 36              741         33.97    41.98             2.303        2.299
+\end{verbatim}
+\begin{alltt}
+\hlkwd{plot}\hlstd{(}\hlkwc{x} \hlstd{= years,} \hlkwc{y} \hlstd{= summary}\hlopt{$}\hlstd{Wordperspeech,} \hlkwc{type} \hlstd{=} \hlstr{"h"}\hlstd{,} \hlkwc{main} \hlstd{=} \hlstr{"Average Word"}\hlstd{)}
+\hlkwd{plot}\hlstd{(}\hlkwc{x} \hlstd{= years,} \hlkwc{y} \hlstd{= summary}\hlopt{$}\hlstd{Numberofspeeches,} \hlkwc{type} \hlstd{=} \hlstr{"h"}\hlstd{,} \hlkwc{main} \hlstd{=} \hlstr{"Average Number of Dialogue"}\hlstd{)}
+\hlkwd{plot}\hlstd{(}\hlkwc{x} \hlstd{= years,} \hlkwc{y} \hlstd{= summary}\hlopt{$}\hlstd{Sentenceperspeech,} \hlkwc{type} \hlstd{=} \hlstr{"h"}\hlstd{,} \hlkwc{main} \hlstd{=} \hlstr{"Average Sentence"}\hlstd{)}
+\hlkwd{plot}\hlstd{(}\hlkwc{x} \hlstd{= years,} \hlkwc{y} \hlstd{= summary}\hlopt{$}\hlstd{NumberScene,} \hlkwc{type} \hlstd{=} \hlstr{"h"}\hlstd{,} \hlkwc{main} \hlstd{=} \hlstr{"Number of Scenes for Each Play"}\hlstd{)}
+\hlkwd{plot}\hlstd{(}\hlkwc{x} \hlstd{= years,} \hlkwc{y} \hlstd{= summary}\hlopt{$}\hlstd{Numberofspeakers,} \hlkwc{type} \hlstd{=} \hlstr{"h"}\hlstd{,} \hlkwc{main} \hlstd{=} \hlstr{"Number of speakers per play"}\hlstd{)}
+\end{alltt}
+\end{kframe}
+
+{\centering \includegraphics[width=\maxwidth]{figure/minimal-Shakespeare_s_Plays_from_a_Statistician_s_Point1} 
+\includegraphics[width=\maxwidth]{figure/minimal-Shakespeare_s_Plays_from_a_Statistician_s_Point2} 
+\includegraphics[width=\maxwidth]{figure/minimal-Shakespeare_s_Plays_from_a_Statistician_s_Point3} 
+\includegraphics[width=\maxwidth]{figure/minimal-Shakespeare_s_Plays_from_a_Statistician_s_Point4} 
+\includegraphics[width=\maxwidth]{figure/minimal-Shakespeare_s_Plays_from_a_Statistician_s_Point5} 
+
+}
+
+
+
+\end{knitrout}
+
+
+\end{document}
