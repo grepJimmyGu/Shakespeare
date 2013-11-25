@@ -1,0 +1,236 @@
+\documentclass[12pt]{article}
+\usepackage[sc]{mathpazo}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\geometry{verbose,tmargin=2.5cm,bmargin=2.5cm,lmargin=1.5cm,rmargin=1.5cm}
+\setcounter{secnumdepth}{2}
+\setcounter{tocdepth}{2}
+\usepackage{url}
+\usepackage[unicode=true,pdfusetitle,
+ bookmarks=true,bookmarksnumbered=true,bookmarksopen=true,bookmarksopenlevel=2,
+ breaklinks=false,pdfborder={0 0 1},backref=false,colorlinks=false]
+ {hyperref}
+\hypersetup{
+ pdfstartview={XYZ null null 1}}
+\usepackage{breakurl}
+\begin{document}
+<<setup, include=FALSE, cache=FALSE>>=
+library(knitr)
+# set global chunk options
+opts_chunk$set(fig.path='figure/minimal-', fig.align='center', fig.show='hold')
+options(replace.assign=TRUE,width=70)
+@
+
+\title{Problem Set 4}
+
+
+\author{Jinze Gu}
+
+\maketitle
+
+<<Problem 2>>=
+# Problem 2
+# 2(a)
+# We have 16 accurate decimal place if we want to store 1.000000000001 in R.
+# 2(b)
+options(digits = 20)
+1+1e-12
+add<-rep(1e-16, 10000)
+x<-c(1,add)
+sum(x)
+# We only have 13 accurate decimal places
+@
+
+<<2(c), engine='python'>>=
+# 2(c)
+x1 = [1e-16]*10000
+x2 = [1]
+x = x2 + x1
+print sum(x)
+for i in range(10000):
+  if(i == 0):
+    sum = x[i] + x[i+1]
+  else:
+    sum = sum + x[i+1]
+print sum
+print '%.22f'%sum
+
+sum1 = 0
+for i in range(10001):
+    sum1 = sum1 + x[10000-i]
+print sum1
+print '%.22f'%sum1
+
+@ 
+
+<<Problem 2d>>=
+# 2(d) Use R.
+add<-rep(1e-16, 10000)
+x<-c(1,add)
+# Add from left to right
+y<-0
+for(i in 1:10001){
+  y <- y + x[i]
+}
+y
+# We don't have the right answer as 1+1e-12,and we lost all the digits after decimal point.
+# Add from right to left
+z<-0
+for(i in 1:10001){
+  z <- z + x[10002-i]
+}
+z
+# We have the right answer as 1+1e-12, we have 16 digits of accuracy.
+@
+
+<<2(d),engine='python'>>=
+# Use python, we have the following results.
+x1 = [1e-16]*10000
+x2 = [1]
+x = x2 + x1
+right = 1 + 1e-12
+print 'The right answer should be'
+print '%.22f'%right
+print 'Use sum() function, the answer is'
+print sum(x)
+for i in range(10000):
+  if(i == 0):
+    sum = x[i] + x[i+1]
+  else:
+    sum = sum + x[i+1]
+decimal = '%.22f'%sum
+print 'Add from left to right:'
+print decimal
+
+sum1 = 0
+for i in range(10001):
+    sum1 = sum1 + x[10000-i]
+decimal1 = '%.30f'%sum1
+print 'Add from right to left:'
+print decimal1
+@
+
+<<2e>>=
+# 2(e)
+# There are several conclusions that we can draw about sum function:
+# Firstly, we can see from the previous summation that sum does not add vectors from left to right or from right to left.Since two for-loops give different outcomes compared with the result from sum() function.
+# \\
+# Secondly, we can try several examples to demonstrate that there is a 'dominant rule' in the vector summation using sum(), that is, sum will consider dominant numbers in the vector. E.g: if we have 3000 1s and 2000 1e-16s in a vector, then the sum() gives
+# value 3000; however, if we have 3000 1s and 7000 1e-16s in a vector, then the sum() gives value 3000.000000000000454747
+# E.g
+a<-rep(1,3000)
+b<-rep(1e-16,2000)
+sum(a,b)
+
+a1<-rep(1,3000)
+b1<-rep(1e-16,4000)
+sum(a1,b1)
+
+# Last, it seems sum() function works differently in adding up a vector and in adding up several different numbers, and the digits of the outcome from sum() is sort of determined by the sequence of values being added since sum(1,1e-16,1e-16,1e-16) have different accurate digits compared with sum(1e-16,1e-16,1e-16,1)
+# E.g
+a3<-c(1,1e-16,1e-16,1e-16)
+sum(1,1e-16,1e-16,1e-16)
+sum(1e-16,1e-16,1e-16,1)
+sum(a3)
+
+@
+
+<<Problem 3>>=
+# Problem 3
+# 3(a) and 3(b) are in the hand-written part of homework
+# 3(c)
+# Basically, I use the following code and conduct it on SCF machine with large n.
+options(digits = 7)
+set.seed(0)
+n<-1000
+U<-matrix(rnorm(n^2),n)
+A<-t(U)%*%U
+gc()
+x<-chol(A)
+gc()
+system.time(chol(A))
+
+# Conclusion: based on the max used memory, we can see that choleskey decomposition do use the original matrix to store decomposed matrix since the max used memory does not change too much before or after we conduct choleskey decomposition. This is basically the same as I expected. We have draw the following graph based on different n.
+n<-c(3000,4000,5000,6000,7000,8000)
+max_memory<-c(211,371.2,577.2,829,1126.5,1469.9)/100
+time_elapsed<-c(0.572,1.171,2.124,3.349,5.287,8.050)
+infor<-cbind(n,max_memory,time_elapsed)
+plot(infor[,1],infor[,2],type = 'b',main = 'Problem 3 Graph',xlab = 'n',ylab = 'time(s), max_memory(100Mb)',ylim = c(0,15))
+points(infor[,1],infor[,3],pch = 2)
+lines(infor[,1],infor[,3])
+legend("bottomright",pch = c(1,2), legend = c("Memory Use","Time"))
+
+# Obviously, increasing n will lead to increasing time and memory use, and the increasing speed of time is less than the increasing speed of memory.
+@
+
+<<Problem 4>>=
+# I used the following function to do 
+# 4(a)
+library(rbenchmark)
+set.seed(0)
+data<-sample(rnorm(5000),5000^2,replace = TRUE)
+U<-matrix(data,5000)
+X<-t(U)%*%U
+y<-c(rnorm(5000))
+sl1<-solve(X)%*%y;sl2<-solve(X,y);sl3<-backsolve(chol(X),forwardsolve(t(chol(X)),y))
+# Benchmark outcome indicates that time elapsed will be increased by the calculation with higher order of computations.
+benchmark(solve(X)%*%y,solve(X,y),backsolve(chol(X),forwardsolve(t(chol(X)),y)),replications = 1,columns = c(1:5))
+
+# 4(b)
+# Since the condition number of X is 10^8, so we have can consider the outcomes are same if the difference is less than 16-8 = 8 digits after decimal place
+condition_number<-kappa(X, exact = T)
+condition_number
+all.equal(as.numeric(sl1),sl2, tolerance = .Machine$double.eps*condition_number)
+all.equal(as.numeric(sl1),sl3,tolerance = .Machine$double.eps*condition_number)
+all.equal(sl2,sl3,tolerance = .Machine$double.eps*condition_number)
+# Thus, if the conclusions from these three methods are same numerically(if we don't consider the inaccurate digits)
+# The mean difference of sl1 and sl2 is:
+abs(sum(sl1-sl2))/5000
+# The mean difference of sl1 and sl3 is:
+abs(sum(sl1-sl3))/5000
+# The mean difference of sl2 and sl3 is:
+abs(sum(sl2-sl3))/5000
+# On average, sl1 and sl2 have 13 same decimal place, and sl2 and sl3 have 6 same decimal place. 
+@
+
+<<Problem 5>>=
+# Problem 5
+# In order to verify that method 2 is better than method 1, I have written the following two functions. gls1 uses method 1 and gls2 uses method 2.
+
+gls1<-function(x,y,sigma){
+  if(nrow(x)==length(y)){
+    X <- x
+    Y <- y
+    Sigma <- sigma
+    X.qr = qr(X)
+    UQR.qr = qr(chol(Sigma)%*%qr.Q(X.qr)%*%qr.R(X.qr))
+    solution <- backsolve(qr.R(UQR.qr),t(qr.Q(UQR.qr))%*%chol(Sigma)%*%Y)
+    return(solution)
+  }
+  else{
+    print("You need to input matrix with valid dimensions")
+  }
+}
+
+gls2<-function(x,y,sigma){
+  if(nrow(x)==length(y)){
+    U<-chol(t(x)%*%sigma%*%x)
+    solution<-backsolve(U,forwardsolve(t(U),t(x)%*%sigma%*%y))
+    return(solution)
+  }
+  else{
+    print("You need to input matrix with valid dimensions")
+  }
+}
+
+# Now I test if gls2 runs faster than gls1
+x<-matrix(rnorm(100^2),100)
+y<-matrix(rnorm(100))
+u<-matrix(rnorm(100^2),100)
+sigma<-t(u)%*%u
+all.equal(gls1(x,y,sigma),gls2(x,y,sigma))
+benchmark(gls1(x,y,sigma),gls2(x,y,sigma),replications = 100, columns = c(1:5))
+
+# In conclusion, I think gls2 is a better way to compute beta.
+@
+\end{document}
