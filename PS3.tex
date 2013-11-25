@@ -1,0 +1,607 @@
+\documentclass{article}\usepackage[]{graphicx}\usepackage[]{color}
+%% maxwidth is the original width if it is less than linewidth
+%% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+  \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+ \def\at@end@of@kframe{}%
+ \ifinner\ifhmode%
+  \def\at@end@of@kframe{\end{minipage}}%
+  \begin{minipage}{\columnwidth}%
+ \fi\fi%
+ \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+ \colorbox{shadecolor}{##1}\hskip-\fboxsep
+     % There is no \\@totalrightmargin, so:
+     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed%
+ \at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}
+\usepackage[sc]{mathpazo}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\geometry{verbose,tmargin=2.5cm,bmargin=2.5cm,lmargin=1.5cm,rmargin=1.5cm}
+\setcounter{secnumdepth}{2}
+\setcounter{tocdepth}{2}
+\usepackage{url}
+\usepackage[unicode=true,pdfusetitle,
+ bookmarks=true,bookmarksnumbered=true,bookmarksopen=true,bookmarksopenlevel=2,
+ breaklinks=false,pdfborder={0 0 1},backref=false,colorlinks=false]
+ {hyperref}
+\hypersetup{
+ pdfstartview={XYZ null null 1}}
+\usepackage{breakurl}
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\begin{document}
+
+
+
+\title{Problem Set 3}
+
+
+\author{Jinze Gu}
+
+\maketitle
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{# PROBLEM ONE a).}
+\hlkwd{library}\hlstd{(rbenchmark)}
+\hlstd{logf1} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{k}\hlstd{,} \hlkwc{n}\hlstd{,} \hlkwc{p}\hlstd{,} \hlkwc{t}\hlstd{) \{}
+    \hlkwa{if} \hlstd{(n} \hlopt{!=} \hlkwd{max}\hlstd{(k)) \{}
+        \hlkwd{lchoose}\hlstd{(n, k)} \hlopt{+} \hlstd{k} \hlopt{*} \hlkwd{log}\hlstd{(k)} \hlopt{+} \hlstd{(n} \hlopt{-} \hlstd{k)} \hlopt{*} \hlkwd{log}\hlstd{(n} \hlopt{-} \hlstd{k)} \hlopt{-} \hlstd{n} \hlopt{*} \hlkwd{log}\hlstd{(n)} \hlopt{+} \hlstd{t} \hlopt{*} \hlstd{(n} \hlopt{*} \hlkwd{log}\hlstd{(n)} \hlopt{-} \hlstd{k} \hlopt{*} \hlkwd{log}\hlstd{(k)} \hlopt{-}
+            \hlstd{(n} \hlopt{-} \hlstd{k)} \hlopt{*} \hlkwd{log}\hlstd{(n} \hlopt{-} \hlstd{k))} \hlopt{+} \hlstd{k} \hlopt{*} \hlstd{t} \hlopt{*} \hlkwd{log}\hlstd{(p)} \hlopt{+} \hlstd{(n} \hlopt{-} \hlstd{k)} \hlopt{*} \hlstd{t} \hlopt{*} \hlkwd{log}\hlstd{(}\hlnum{1} \hlopt{-} \hlstd{p)}
+    \hlstd{\}} \hlkwa{else} \hlstd{\{}
+        \hlstd{n} \hlopt{*} \hlstd{t} \hlopt{*} \hlkwd{log}\hlstd{(p)}
+    \hlstd{\}}
+\hlstd{\}}
+\hlcom{# Comment on why taking log scale: since in some extreme value, R shows 'NaN'in exponential}
+\hlcom{# scale,but if I take log scale, most of value can be shown.}
+\hlcom{# This is the function used to exponentiate the 'log' function}
+\hlstd{f} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{x}\hlstd{,} \hlkwc{y}\hlstd{) \{}
+    \hlkwd{exp}\hlstd{(}\hlkwd{logf1}\hlstd{(}\hlkwc{k} \hlstd{= x,} \hlkwc{n} \hlstd{= y,} \hlkwc{p} \hlstd{=} \hlnum{0.3}\hlstd{,} \hlkwc{t} \hlstd{=} \hlnum{0.5}\hlstd{))}
+\hlstd{\}}
+\hlcom{# This is the function used to get the final answer}
+\hlstd{g} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{n}\hlstd{) \{}
+    \hlstd{t} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{x}\hlstd{) \{}
+        \hlkwd{f}\hlstd{(x,} \hlkwc{y} \hlstd{= n)}
+    \hlstd{\}}
+    \hlstd{ans} \hlkwb{<-} \hlkwd{unlist}\hlstd{(}\hlkwd{lapply}\hlstd{(}\hlkwd{c}\hlstd{(}\hlnum{1}\hlopt{:}\hlstd{n), t))}
+    \hlkwd{return}\hlstd{(}\hlkwd{sum}\hlstd{(ans))}
+\hlstd{\}}
+\hlkwd{g}\hlstd{(}\hlnum{100}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
+## [1] 1.419
+\end{verbatim}
+\begin{alltt}
+\hlcom{# b).  Full vectorized fashion with no loops or apply() I may need to delete this function since}
+\hlcom{# it does not use 'log'}
+\hlstd{f1} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{k}\hlstd{,} \hlkwc{n}\hlstd{,} \hlkwc{p}\hlstd{,} \hlkwc{t}\hlstd{) \{}
+    \hlkwd{choose}\hlstd{(n, k)} \hlopt{*} \hlstd{(k}\hlopt{^}\hlstd{k} \hlopt{*} \hlstd{(n} \hlopt{-} \hlstd{k)}\hlopt{^}\hlstd{(n} \hlopt{-} \hlstd{k)}\hlopt{/}\hlstd{n}\hlopt{^}\hlstd{n)}\hlopt{^}\hlstd{(}\hlnum{1} \hlopt{-} \hlstd{t)} \hlopt{*} \hlstd{p}\hlopt{^}\hlstd{(k} \hlopt{*} \hlstd{t)} \hlopt{*} \hlstd{(}\hlnum{1} \hlopt{-} \hlstd{p)}\hlopt{^}\hlstd{((n} \hlopt{-} \hlstd{k)} \hlopt{*} \hlstd{t)}
+\hlstd{\}}
+\hlstd{g1} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{k}\hlstd{,} \hlkwc{n}\hlstd{) \{}
+    \hlkwd{return}\hlstd{(}\hlkwd{sum}\hlstd{(}\hlkwd{f1}\hlstd{(k, n,} \hlnum{0.3}\hlstd{,} \hlnum{0.5}\hlstd{)))}
+\hlstd{\}}
+\hlcom{# This is the comparison between program in a) and b)}
+\hlkwd{benchmark}\hlstd{(}\hlkwd{g}\hlstd{(}\hlnum{2000}\hlstd{),} \hlkwd{g1}\hlstd{(}\hlkwd{c}\hlstd{(}\hlnum{1}\hlopt{:}\hlnum{2000}\hlstd{),} \hlnum{2000}\hlstd{),} \hlkwc{columns} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{1}\hlopt{:}\hlnum{5}\hlstd{))}
+\end{alltt}
+\begin{verbatim}
+##                  test replications user.self sys.self elapsed
+## 1             g(2000)          100     2.778    0.011   2.788
+## 2 g1(c(1:2000), 2000)          100     0.104    0.000   0.105
+\end{verbatim}
+\begin{alltt}
+
+# c). I tried it in arwen, but it seems I can not speed up my program faster than the time 0.11
+# benchmark(g1(a,2000),columns = c(1:5))\\ test replications user.self sys.self elapsed\\ 1
+# g1(a, 2000) 100 0.204 0 0.206\\
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{# PROBLEM TWO a).}
+\hlkwd{set.seed}\hlstd{(}\hlnum{0}\hlstd{)}
+\hlstd{ranwalk1} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{x}\hlstd{,} \hlkwc{p}\hlstd{) \{}
+    \hlkwa{if} \hlstd{(}\hlopt{!}\hlkwd{is.integer}\hlstd{(x)) \{}
+        \hlkwd{print}\hlstd{(}\hlstr{"The input should be an integer"}\hlstd{)}
+    \hlstd{\}}
+    \hlkwa{if} \hlstd{(x} \hlopt{<=} \hlnum{0}\hlstd{) \{}
+        \hlkwd{print}\hlstd{(}\hlstr{"Negative number and zero are not valid input"}\hlstd{)}
+    \hlstd{\}}
+    \hlstd{n} \hlkwb{<-} \hlkwd{as.numeric}\hlstd{(}\hlkwd{as.integer}\hlstd{(}\hlkwd{abs}\hlstd{(x))} \hlopt{+} \hlnum{1}\hlstd{)}
+    \hlstd{x} \hlkwb{<-} \hlkwd{vector}\hlstd{(}\hlstr{"numeric"}\hlstd{, n)}
+    \hlstd{y} \hlkwb{<-} \hlkwd{vector}\hlstd{(}\hlstr{"numeric"}\hlstd{, n)}
+    \hlkwa{for} \hlstd{(i} \hlkwa{in} \hlkwd{c}\hlstd{(}\hlkwd{min}\hlstd{(n,} \hlnum{2}\hlstd{)}\hlopt{:}\hlkwd{max}\hlstd{(n,} \hlnum{2}\hlstd{))) \{}
+        \hlcom{# In case the input is 0}
+        \hlstd{x[i]} \hlkwb{<-} \hlstd{x[}\hlkwd{max}\hlstd{((i} \hlopt{-} \hlnum{1}\hlstd{),} \hlnum{0}\hlstd{)]}
+        \hlstd{y[i]} \hlkwb{<-} \hlstd{y[}\hlkwd{max}\hlstd{((i} \hlopt{-} \hlnum{1}\hlstd{),} \hlnum{0}\hlstd{)]}
+        \hlstd{ran} \hlkwb{<-} \hlkwd{sample}\hlstd{(}\hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,} \hlnum{2}\hlstd{,} \hlnum{3}\hlstd{,} \hlnum{4}\hlstd{),} \hlnum{1}\hlstd{,} \hlkwc{prob} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{0.25}\hlstd{,} \hlnum{0.25}\hlstd{,} \hlnum{0.25}\hlstd{,} \hlnum{0.25}\hlstd{))}
+        \hlkwa{if} \hlstd{(ran} \hlopt{==} \hlnum{1}\hlstd{) \{}
+            \hlstd{x[i]} \hlkwb{<-} \hlstd{x[i]} \hlopt{+} \hlnum{1}
+        \hlstd{\}} \hlkwa{else if} \hlstd{(ran} \hlopt{==} \hlnum{2}\hlstd{) \{}
+            \hlstd{x[i]} \hlkwb{<-} \hlstd{x[i]} \hlopt{-} \hlnum{1}
+        \hlstd{\}} \hlkwa{else if} \hlstd{(ran} \hlopt{==} \hlnum{3}\hlstd{) \{}
+            \hlstd{y[i]} \hlkwb{<-} \hlstd{y[i]} \hlopt{+} \hlnum{1}
+        \hlstd{\}} \hlkwa{else} \hlstd{\{}
+            \hlstd{y[i]} \hlkwb{<-} \hlstd{y[i]} \hlopt{-} \hlnum{1}
+        \hlstd{\}}
+    \hlstd{\}}
+    \hlkwa{if} \hlstd{(p) \{}
+        \hlkwd{plot}\hlstd{(x, y,} \hlkwc{type} \hlstd{=} \hlstr{"l"}\hlstd{)}
+    \hlstd{\}}
+    \hlkwd{return}\hlstd{(}\hlkwd{c}\hlstd{(x[n], y[n]))}
+\hlstd{\}}
+\hlkwd{Rprof}\hlstd{(}\hlstr{"ranwalk.out"}\hlstd{,} \hlkwc{memory.profiling} \hlstd{=} \hlnum{1}\hlstd{,} \hlkwc{line.profiling} \hlstd{=} \hlnum{1}\hlstd{)}
+\hlkwd{ranwalk1}\hlstd{(}\hlnum{10000L}\hlstd{,} \hlnum{1}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
+## [1] 100 180
+\end{verbatim}
+\begin{alltt}
+\hlkwd{Rprof}\hlstd{(}\hlkwa{NULL}\hlstd{)}
+\hlkwd{summaryRprof}\hlstd{(}\hlstr{"ranwalk.out"}\hlstd{,} \hlkwc{memory} \hlstd{=} \hlstr{"none"}\hlstd{,} \hlkwc{lines} \hlstd{=} \hlstr{"hide"}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
+## $by.self
+##              self.time self.pct total.time total.pct
+## "ranwalk1"        0.08     50.0       0.16     100.0
+## "sample.int"      0.06     37.5       0.06      37.5
+## "identical"       0.02     12.5       0.02      12.5
+## 
+## $by.total
+##                       total.time total.pct self.time self.pct
+## "ranwalk1"                  0.16     100.0      0.08     50.0
+## "block_exec"                0.16     100.0      0.00      0.0
+## "call_block"                0.16     100.0      0.00      0.0
+## "doTryCatch"                0.16     100.0      0.00      0.0
+## "eval"                      0.16     100.0      0.00      0.0
+## "evaluate_call"             0.16     100.0      0.00      0.0
+## "evaluate"                  0.16     100.0      0.00      0.0
+## "handle"                    0.16     100.0      0.00      0.0
+## "in_dir"                    0.16     100.0      0.00      0.0
+## "knit"                      0.16     100.0      0.00      0.0
+## "process_file"              0.16     100.0      0.00      0.0
+## "process_group.block"       0.16     100.0      0.00      0.0
+## "process_group"             0.16     100.0      0.00      0.0
+## "try"                       0.16     100.0      0.00      0.0
+## "tryCatch"                  0.16     100.0      0.00      0.0
+## "tryCatchList"              0.16     100.0      0.00      0.0
+## "tryCatchOne"               0.16     100.0      0.00      0.0
+## "withCallingHandlers"       0.16     100.0      0.00      0.0
+## "withVisible"               0.16     100.0      0.00      0.0
+## "sample.int"                0.06      37.5      0.06     37.5
+## "sample"                    0.06      37.5      0.00      0.0
+## "identical"                 0.02      12.5      0.02     12.5
+## "<Anonymous>"               0.02      12.5      0.00      0.0
+## "fun"                       0.02      12.5      0.00      0.0
+## "handle_output"             0.02      12.5      0.00      0.0
+## "plot_snapshot"             0.02      12.5      0.00      0.0
+## "plot.default"              0.02      12.5      0.00      0.0
+## "plot.new"                  0.02      12.5      0.00      0.0
+## "plot"                      0.02      12.5      0.00      0.0
+## 
+## $sample.interval
+## [1] 0.02
+## 
+## $sampling.time
+## [1] 0.16
+\end{verbatim}
+\begin{alltt}
+\hlcom{# b). Some improvment based on ranwalk1}
+\hlstd{ranwalk2} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{x}\hlstd{,} \hlkwc{p}\hlstd{) \{}
+    \hlkwa{if} \hlstd{(}\hlopt{!}\hlkwd{is.integer}\hlstd{(x)} \hlopt{|} \hlstd{x} \hlopt{<=} \hlnum{0}\hlstd{) \{}
+        \hlkwd{print}\hlstd{(}\hlstr{"The input should be an integer"}\hlstd{)}
+    \hlstd{\}}
+    \hlstd{n} \hlkwb{<-} \hlkwd{as.numeric}\hlstd{(}\hlkwd{as.integer}\hlstd{(}\hlkwd{abs}\hlstd{(x))} \hlopt{+} \hlnum{1}\hlstd{)}
+    \hlstd{xy} \hlkwb{<-} \hlkwd{matrix}\hlstd{(}\hlnum{0}\hlstd{, n,} \hlnum{2}\hlstd{)}
+    \hlkwa{for} \hlstd{(i} \hlkwa{in} \hlkwd{c}\hlstd{(}\hlkwd{min}\hlstd{(n,} \hlnum{2}\hlstd{)}\hlopt{:}\hlkwd{max}\hlstd{(n,} \hlnum{2}\hlstd{))) \{}
+        \hlcom{# In case the input is 0}
+        \hlstd{xy[i,} \hlnum{1}\hlstd{]} \hlkwb{<-} \hlstd{xy[}\hlkwd{max}\hlstd{((i} \hlopt{-} \hlnum{1}\hlstd{),} \hlnum{0}\hlstd{),} \hlnum{1}\hlstd{]}
+        \hlstd{xy[i,} \hlnum{2}\hlstd{]} \hlkwb{<-} \hlstd{xy[}\hlkwd{max}\hlstd{((i} \hlopt{-} \hlnum{1}\hlstd{),} \hlnum{0}\hlstd{),} \hlnum{2}\hlstd{]}
+        \hlstd{ran} \hlkwb{<-} \hlkwd{sample}\hlstd{(}\hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,} \hlnum{2}\hlstd{,} \hlnum{3}\hlstd{,} \hlnum{4}\hlstd{),} \hlnum{1}\hlstd{,} \hlkwc{prob} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{0.25}\hlstd{,} \hlnum{0.25}\hlstd{,} \hlnum{0.25}\hlstd{,} \hlnum{0.25}\hlstd{))}
+        \hlkwa{if} \hlstd{(ran} \hlopt{==} \hlnum{1}\hlstd{) \{}
+            \hlstd{xy[i,} \hlnum{1}\hlstd{]} \hlkwb{<-} \hlstd{xy[i,} \hlnum{1}\hlstd{]} \hlopt{+} \hlnum{1}
+        \hlstd{\}} \hlkwa{else if} \hlstd{(ran} \hlopt{==} \hlnum{2}\hlstd{) \{}
+            \hlstd{xy[i,} \hlnum{1}\hlstd{]} \hlkwb{<-} \hlstd{xy[i,} \hlnum{1}\hlstd{]} \hlopt{-} \hlnum{1}
+        \hlstd{\}} \hlkwa{else if} \hlstd{(ran} \hlopt{==} \hlnum{3}\hlstd{) \{}
+            \hlstd{xy[i,} \hlnum{2}\hlstd{]} \hlkwb{<-} \hlstd{xy[i,} \hlnum{2}\hlstd{]} \hlopt{+} \hlnum{1}
+        \hlstd{\}} \hlkwa{else} \hlstd{\{}
+            \hlstd{xy[i,} \hlnum{2}\hlstd{]} \hlkwb{<-} \hlstd{xy[i,} \hlnum{2}\hlstd{]} \hlopt{-} \hlnum{1}
+        \hlstd{\}}
+    \hlstd{\}}
+    \hlkwa{if} \hlstd{(p) \{}
+        \hlkwd{plot}\hlstd{(xy,} \hlkwc{type} \hlstd{=} \hlstr{"l"}\hlstd{)}
+    \hlstd{\}}
+    \hlkwd{return}\hlstd{(xy[n, ])}
+\hlstd{\}}
+\hlkwd{benchmark}\hlstd{(}\hlkwd{ranwalk1}\hlstd{(}\hlnum{1000L}\hlstd{,} \hlnum{0}\hlstd{),} \hlkwd{ranwalk2}\hlstd{(}\hlnum{1000L}\hlstd{,} \hlnum{0}\hlstd{),} \hlkwc{columns} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{1}\hlopt{:}\hlnum{5}\hlstd{))}
+\end{alltt}
+\begin{verbatim}
+##                test replications user.self sys.self elapsed
+## 1 ranwalk1(1000, 0)          100     1.577    0.004   1.582
+## 2 ranwalk2(1000, 0)          100     1.610    0.003   1.613
+\end{verbatim}
+\begin{alltt}
+\hlcom{# It seems, ranwalk2 is not an improvment, and matrix is no better than vector in storing values}
+\hlcom{# and speeding up my program}
+\hlcom{# New way to solve the problem without forloop}
+\hlstd{ranwalk3} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{n}\hlstd{,} \hlkwc{p}\hlstd{) \{}
+    \hlstd{right} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,} \hlnum{0}\hlstd{)}
+    \hlstd{up} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,} \hlnum{1}\hlstd{)}
+    \hlstd{left} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlopt{-}\hlnum{1}\hlstd{,} \hlnum{0}\hlstd{)}
+    \hlstd{down} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,} \hlopt{-}\hlnum{1}\hlstd{)}
+    \hlstd{start} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,} \hlnum{0}\hlstd{)}
+    \hlstd{direction} \hlkwb{<-} \hlkwd{cbind}\hlstd{(left, up, right, down)}
+    \hlstd{d} \hlkwb{<-} \hlkwd{sample}\hlstd{(}\hlkwd{c}\hlstd{(}\hlstr{"left"}\hlstd{,} \hlstr{"up"}\hlstd{,} \hlstr{"right"}\hlstd{,} \hlstr{"down"}\hlstd{),} \hlkwd{as.integer}\hlstd{(}\hlkwd{abs}\hlstd{(n)),} \hlkwc{replace} \hlstd{=} \hlnum{TRUE}\hlstd{)}
+    \hlstd{x} \hlkwb{<-} \hlkwd{cumsum}\hlstd{(direction[}\hlnum{1}\hlstd{, d])}
+    \hlstd{y} \hlkwb{<-} \hlkwd{cumsum}\hlstd{(direction[}\hlnum{2}\hlstd{, d])}
+    \hlstd{path} \hlkwb{<-} \hlkwd{rbind}\hlstd{(start,} \hlkwd{cbind}\hlstd{(x, y))}
+    \hlkwa{if} \hlstd{(p) \{}
+        \hlkwd{plot}\hlstd{(path,} \hlkwc{type} \hlstd{=} \hlstr{"l"}\hlstd{)}
+    \hlstd{\}}
+    \hlkwd{return}\hlstd{(path)}
+\hlstd{\}}
+\hlcom{# The comparison is as follows}
+\hlkwd{benchmark}\hlstd{(}\hlkwd{ranwalk1}\hlstd{(}\hlnum{10000L}\hlstd{,} \hlnum{0}\hlstd{),} \hlkwd{ranwalk2}\hlstd{(}\hlnum{10000L}\hlstd{,} \hlnum{0}\hlstd{),} \hlkwd{ranwalk3}\hlstd{(}\hlnum{10000}\hlstd{,} \hlnum{0}\hlstd{),} \hlkwc{columns} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{1}\hlopt{:}\hlnum{5}\hlstd{))}
+\end{alltt}
+\begin{verbatim}
+##                 test replications user.self sys.self elapsed
+## 1 ranwalk1(10000, 0)          100    15.010    0.031  15.042
+## 2 ranwalk2(10000, 0)          100    15.748    0.034  15.782
+## 3 ranwalk3(10000, 0)          100     0.161    0.016   0.178
+\end{verbatim}
+\end{kframe}
+
+{\centering \includegraphics[width=\maxwidth]{figure/minimal-Problem_2} 
+
+}
+
+
+
+\end{knitrout}
+
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{# PROBLEM THREE}
+\hlkwd{set.seed}\hlstd{(}\hlnum{0}\hlstd{)}
+\hlcom{# This is the random walk function we used}
+\hlstd{ranwalk.rw} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{numbersteps}\hlstd{) \{}
+    \hlstd{right} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,} \hlnum{0}\hlstd{)}
+    \hlstd{up} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,} \hlnum{1}\hlstd{)}
+    \hlstd{left} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlopt{-}\hlnum{1}\hlstd{,} \hlnum{0}\hlstd{)}
+    \hlstd{down} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,} \hlopt{-}\hlnum{1}\hlstd{)}
+    \hlstd{start} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,} \hlnum{0}\hlstd{)}
+    \hlstd{direction} \hlkwb{<-} \hlkwd{cbind}\hlstd{(left, up, right, down)}
+    \hlstd{d} \hlkwb{<-} \hlkwd{sample}\hlstd{(}\hlkwd{c}\hlstd{(}\hlstr{"left"}\hlstd{,} \hlstr{"up"}\hlstd{,} \hlstr{"right"}\hlstd{,} \hlstr{"down"}\hlstd{),} \hlkwd{as.integer}\hlstd{(}\hlkwd{abs}\hlstd{(numbersteps)),} \hlkwc{replace} \hlstd{=} \hlnum{TRUE}\hlstd{)}
+    \hlstd{x} \hlkwb{<-} \hlkwd{cumsum}\hlstd{(direction[}\hlnum{1}\hlstd{, d])}
+    \hlstd{y} \hlkwb{<-} \hlkwd{cumsum}\hlstd{(direction[}\hlnum{2}\hlstd{, d])}
+    \hlstd{path} \hlkwb{<-} \hlkwd{rbind}\hlstd{(start,} \hlkwd{cbind}\hlstd{(x, y))}
+    \hlkwd{return}\hlstd{(path)}
+\hlstd{\}}
+\hlcom{# This is my constructor function}
+\hlstd{rw} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{numbersteps}\hlstd{) \{}
+    \hlstd{s} \hlkwb{<-} \hlkwd{ranwalk.rw}\hlstd{(numbersteps)}
+    \hlstd{obj} \hlkwb{<-} \hlkwd{list}\hlstd{(}\hlkwc{numberofsteps} \hlstd{= numbersteps,} \hlkwc{finalstep} \hlstd{= s[(numbersteps} \hlopt{+} \hlnum{1}\hlstd{), ],} \hlkwc{path} \hlstd{= s)}
+    \hlkwd{class}\hlstd{(obj)} \hlkwb{<-} \hlstr{"rw"}
+    \hlkwd{rm}\hlstd{(s)}
+    \hlkwd{return}\hlstd{(obj)}
+\hlstd{\}}
+\hlcom{# This is the definition of 'print' in rw.class}
+\hlstd{print.rw} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{object}\hlstd{) \{}
+    \hlkwd{with}\hlstd{(object,} \hlkwd{cat}\hlstd{(}\hlstr{"This is a simulation of random walk of"}\hlstd{, numberofsteps,} \hlstr{"steps"}\hlstd{,} \hlstr{".\textbackslash{}n"}\hlstd{,} \hlstr{"The final step is"}\hlstd{,}
+        \hlstd{finalstep,} \hlstr{"\textbackslash{}n"}\hlstd{))}
+    \hlkwd{print}\hlstd{(object}\hlopt{$}\hlstd{path)}
+\hlstd{\}}
+\hlcom{# This is definition of 'plot' in rw.class}
+\hlstd{plot.rw} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{object}\hlstd{) \{}
+    \hlkwd{plot}\hlstd{(object}\hlopt{$}\hlstd{path,} \hlkwc{type} \hlstd{=} \hlstr{"b"}\hlstd{,} \hlkwc{xlab} \hlstd{=} \hlstr{"Horizontal Move"}\hlstd{,} \hlkwc{ylab} \hlstd{=} \hlstr{"Vertical Move"}\hlstd{)}
+\hlstd{\}}
+\hlcom{# This is definition of '[' in rw.class}
+\hlstd{`[.rw`} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{object}\hlstd{,} \hlkwc{i}\hlstd{)} \hlkwd{return}\hlstd{(object}\hlopt{$}\hlstd{path[(i} \hlopt{+} \hlnum{1}\hlstd{), ])}
+\hlstd{`start<-`} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{x}\hlstd{,} \hlkwc{...}\hlstd{)} \hlkwd{UseMethod}\hlstd{(}\hlstr{"start<-"}\hlstd{)}
+\hlstd{`start<-.rw`} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{object}\hlstd{,} \hlkwc{value}\hlstd{) \{}
+    \hlstd{object}\hlopt{$}\hlstd{path[,} \hlnum{1}\hlstd{]} \hlkwb{<-} \hlstd{object}\hlopt{$}\hlstd{path[,} \hlnum{1}\hlstd{]} \hlopt{+} \hlstd{value[}\hlnum{1}\hlstd{]}
+    \hlstd{object}\hlopt{$}\hlstd{path[,} \hlnum{2}\hlstd{]} \hlkwb{<-} \hlstd{object}\hlopt{$}\hlstd{path[,} \hlnum{2}\hlstd{]} \hlopt{+} \hlstd{value[}\hlnum{2}\hlstd{]}
+    \hlstd{object}\hlopt{$}\hlstd{finalstep} \hlkwb{<-} \hlstd{object}\hlopt{$}\hlstd{finalstep} \hlopt{+} \hlstd{value}
+    \hlkwd{print}\hlstd{(object)}
+\hlstd{\}}
+\hlkwd{rw}\hlstd{(}\hlnum{10}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
+## This is a simulation of random walk of 10 steps .
+##  The final step is 2 -2 
+##       x  y
+## start 0  0
+## down  0 -1
+## up    0  0
+## up    0  1
+## right 1  1
+## down  1  0
+## left  0  0
+## down  0 -1
+## down  0 -2
+## right 1 -2
+## right 2 -2
+\end{verbatim}
+\begin{alltt}
+\hlkwd{rw}\hlstd{(}\hlnum{10}\hlstd{)[}\hlnum{5}\hlstd{]}
+\end{alltt}
+\begin{verbatim}
+##  x  y 
+## -2  1
+\end{verbatim}
+\begin{alltt}
+\hlstd{s} \hlkwb{<-} \hlkwd{rw}\hlstd{(}\hlnum{10}\hlstd{)}
+\hlkwd{start}\hlstd{(s)} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlnum{5}\hlstd{,} \hlnum{7}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
+## This is a simulation of random walk of 10 steps .
+##  The final step is 3 7 
+##       x y
+## start 5 7
+## down  5 6
+## down  5 5
+## left  4 5
+## right 5 5
+## left  4 5
+## up    4 6
+## up    4 7
+## left  3 7
+## up    3 8
+## down  3 7
+\end{verbatim}
+\begin{alltt}
+\hlkwd{plot}\hlstd{(}\hlkwd{rw}\hlstd{(}\hlnum{100}\hlstd{))}
+\end{alltt}
+\end{kframe}
+
+{\centering \includegraphics[width=\maxwidth]{figure/minimal-Problem_3} 
+
+}
+
+
+
+\end{knitrout}
+
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{# PROBLEM FOUR a).}
+\hlkwd{object.size}\hlstd{(}\hlkwd{sample}\hlstd{(}\hlkwd{c}\hlstd{(}\hlkwd{seq}\hlstd{(}\hlnum{1}\hlstd{,} \hlnum{20}\hlstd{,} \hlkwc{by} \hlstd{=} \hlnum{1}\hlstd{),} \hlnum{NA}\hlstd{),} \hlnum{1e+07}\hlstd{,} \hlkwc{replace} \hlstd{=} \hlnum{TRUE}\hlstd{))}
+\end{alltt}
+\begin{verbatim}
+## 80000040 bytes
+\end{verbatim}
+\begin{alltt}
+\hlstd{fastcount} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{xvar}\hlstd{,} \hlkwc{yvar}\hlstd{) \{}
+    \hlcom{# When we input the value, we have created two 80Mb objects here, so the memory used here is}
+    \hlcom{# 160Mb}
+    \hlstd{nalineX} \hlkwb{<-} \hlkwd{is.na}\hlstd{(xvar)}
+    \hlcom{# The total memory accumulated is 200Mb here since each boolean takes 4 byte}
+    \hlstd{nalineY} \hlkwb{<-} \hlkwd{is.na}\hlstd{(yvar)}
+    \hlcom{# The total memory here is 240Mb here for the same reason}
+    \hlstd{xvar[nalineX} \hlopt{|} \hlstd{nalineY]} \hlkwb{<-} \hlnum{0}
+    \hlstd{yvar[nalineX} \hlopt{|} \hlstd{nalineY]} \hlkwb{<-} \hlnum{0}
+    \hlcom{# The memory used here does not change since the original NA takes same memory as 0}
+    \hlstd{useline} \hlkwb{<-} \hlopt{!}\hlstd{(nalineX} \hlopt{|} \hlstd{nalineY)}
+    \hlcom{# The memory accumulated here is 280Mb}
+    \hlstd{tablex} \hlkwb{<-} \hlkwd{numeric}\hlstd{(}\hlkwd{max}\hlstd{(xvar)} \hlopt{+} \hlnum{1}\hlstd{)}
+    \hlstd{tabley} \hlkwb{<-} \hlkwd{numeric}\hlstd{(}\hlkwd{max}\hlstd{(xvar)} \hlopt{+} \hlnum{1}\hlstd{)}
+    \hlcom{# Tablex and tabley do not take much memory, can be ignored}
+    \hlkwd{stopifnot}\hlstd{(}\hlkwd{length}\hlstd{(xvar)} \hlopt{==} \hlkwd{length}\hlstd{(yvar))}
+    \hlstd{res} \hlkwb{<-} \hlkwd{.C}\hlstd{(}\hlstr{"fastcount"}\hlstd{,} \hlkwc{PACKAGE} \hlstd{=} \hlstr{"GCcorrect"}\hlstd{,} \hlkwc{tablex} \hlstd{=} \hlkwd{as.integer}\hlstd{(tablex),} \hlkwc{tabley} \hlstd{=} \hlkwd{as.integer}\hlstd{(tabley),}
+        \hlkwd{as.integer}\hlstd{(xvar),} \hlkwd{as.integer}\hlstd{(yvar),} \hlkwd{as.integer}\hlstd{(useline),} \hlkwd{as.integer}\hlstd{(}\hlkwd{length}\hlstd{(xvar)))}
+    \hlstd{xuse} \hlkwb{<-} \hlkwd{which}\hlstd{(res}\hlopt{$}\hlstd{tablex} \hlopt{>} \hlnum{0}\hlstd{)}
+    \hlstd{xnames} \hlkwb{<-} \hlstd{xuse} \hlopt{-} \hlnum{1}
+    \hlstd{resb} \hlkwb{<-} \hlkwd{rbind}\hlstd{(res}\hlopt{$}\hlstd{tablex[xuse], res}\hlopt{$}\hlstd{tabley[xuse])}
+    \hlcom{# Here since resb takes 120Mb memory, the total memory taken here is 400Mb}
+    \hlkwd{colnames}\hlstd{(resb)} \hlkwb{<-} \hlstd{xnames}
+    \hlkwd{return}\hlstd{(resb)}
+\hlstd{\}}
+\hlcom{# b).  I rewrite the function as follows, I removed the intermediate vars such as nlinex, nliney}
+\hlcom{# and useline, each of these takes 40Mb. Thus, I think in optimal case, the new code can release}
+\hlcom{# 120 Mb memory.}
+\hlstd{fastcount} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{xvar}\hlstd{,} \hlkwc{yvar}\hlstd{) \{}
+    \hlstd{xvar[}\hlkwd{is.na}\hlstd{(xvar)} \hlopt{|} \hlkwd{is.na}\hlstd{(yvar)]} \hlkwb{<-} \hlnum{0}
+    \hlstd{yvar[}\hlkwd{is.na}\hlstd{(xvar)} \hlopt{|} \hlkwd{is.na}\hlstd{(yvar)]} \hlkwb{<-} \hlnum{0}
+    \hlstd{tablex} \hlkwb{<-} \hlkwd{numeric}\hlstd{(}\hlkwd{max}\hlstd{(xvar)} \hlopt{+} \hlnum{1}\hlstd{)}
+    \hlstd{tabley} \hlkwb{<-} \hlkwd{numeric}\hlstd{(}\hlkwd{max}\hlstd{(xvar)} \hlopt{+} \hlnum{1}\hlstd{)}
+    \hlkwd{stopifnot}\hlstd{(}\hlkwd{length}\hlstd{(xvar)} \hlopt{==} \hlkwd{length}\hlstd{(yvar))}
+    \hlstd{res} \hlkwb{<-} \hlkwd{.C}\hlstd{(}\hlstr{"fastcount"}\hlstd{,} \hlkwc{PACKAGE} \hlstd{=} \hlstr{"GCcorrect"}\hlstd{,} \hlkwc{tablex} \hlstd{=} \hlkwd{as.integer}\hlstd{(tablex),} \hlkwc{tabley} \hlstd{=} \hlkwd{as.integer}\hlstd{(tabley),}
+        \hlkwd{as.integer}\hlstd{(xvar),} \hlkwd{as.integer}\hlstd{(yvar),} \hlkwd{as.integer}\hlstd{(}\hlopt{!}\hlstd{(}\hlkwd{is.na}\hlstd{(xvar)} \hlopt{|} \hlkwd{is.na}\hlstd{(yvar))),} \hlkwd{as.integer}\hlstd{(}\hlkwd{length}\hlstd{(xvar)))}
+    \hlstd{xuse} \hlkwb{<-} \hlkwd{which}\hlstd{(res}\hlopt{$}\hlstd{tablex} \hlopt{>} \hlnum{0}\hlstd{)}
+    \hlstd{xnames} \hlkwb{<-} \hlstd{xuse} \hlopt{-} \hlnum{1}
+    \hlstd{resb} \hlkwb{<-} \hlkwd{rbind}\hlstd{(res}\hlopt{$}\hlstd{tablex[xuse], res}\hlopt{$}\hlstd{tabley[xuse])}
+    \hlkwd{colnames}\hlstd{(resb)} \hlkwb{<-} \hlstd{xnames}
+    \hlkwd{return}\hlstd{(resb)}
+\hlstd{\}}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{# PROBLEM 5 a). The following is my running record using scf.  I tested the time spent on}
+\hlcom{# multiplying two n*n matrices using system.time then recorded information here.}
+\hlcom{# !/usr/bin/Rscript\textbackslash{}\textbackslash{} system.time(matrix(rnorm(4000^2),4000)%*%matrix(rnorm(4000^2),4000))\textbackslash{}\textbackslash{}}
+\hlcom{# This is an information matrix when n = 4000\textbackslash{}\textbackslash{}}
+\hlstd{infor} \hlkwb{<-} \hlkwd{matrix}\hlstd{(}\hlnum{0}\hlstd{,} \hlnum{8}\hlstd{,} \hlnum{3}\hlstd{)}
+\hlkwd{colnames}\hlstd{(infor)} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlstr{"threads"}\hlstd{,} \hlstr{"expected time"}\hlstd{,} \hlstr{"elapsed time"}\hlstd{)}
+\hlstd{infor[,} \hlnum{1}\hlstd{]} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlnum{1}\hlopt{:}\hlnum{8}\hlstd{)}
+\hlstd{infor[,} \hlnum{3}\hlstd{]} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlnum{32.425}\hlstd{,} \hlnum{21.414}\hlstd{,} \hlnum{16.242}\hlstd{,} \hlnum{14.233}\hlstd{,} \hlnum{13.042}\hlstd{,} \hlnum{12.811}\hlstd{,} \hlnum{11.73}\hlstd{,} \hlnum{11.943}\hlstd{)}
+\hlstd{infor[,} \hlnum{2}\hlstd{]} \hlkwb{<-} \hlstd{infor[}\hlnum{1}\hlstd{,} \hlnum{3}\hlstd{]}\hlopt{/}\hlstd{infor[,} \hlnum{1}\hlstd{]}
+\hlstd{infor}
+\end{alltt}
+\begin{verbatim}
+##      threads expected time elapsed time
+## [1,]       1        32.425        32.42
+## [2,]       2        16.212        21.41
+## [3,]       3        10.808        16.24
+## [4,]       4         8.106        14.23
+## [5,]       5         6.485        13.04
+## [6,]       6         5.404        12.81
+## [7,]       7         4.632        11.73
+## [8,]       8         4.053        11.94
+\end{verbatim}
+\begin{alltt}
+\hlkwd{plot}\hlstd{(infor[,} \hlnum{1}\hlstd{], infor[,} \hlnum{2}\hlstd{],} \hlkwc{type} \hlstd{=} \hlstr{"b"}\hlstd{,} \hlkwc{col} \hlstd{=} \hlstr{"blue"}\hlstd{,} \hlkwc{xlab} \hlstd{=} \hlstr{"Number of threads"}\hlstd{,} \hlkwc{ylab} \hlstd{=} \hlstr{"Time(seconds)"}\hlstd{,}
+    \hlkwc{main} \hlstd{=} \hlstr{"4000*4000 matrix multiplication"}\hlstd{)}
+\hlkwd{lines}\hlstd{(infor[,} \hlnum{1}\hlstd{], infor[,} \hlnum{3}\hlstd{],} \hlkwc{type} \hlstd{=} \hlstr{"b"}\hlstd{,} \hlkwc{col} \hlstd{=} \hlstr{"red"}\hlstd{,} \hlkwc{pch} \hlstd{=} \hlnum{4}\hlstd{)}
+\hlcom{# The plot is in the last 3 pages\textbackslash{}\textbackslash{} !/usr/bin/Rscript\textbackslash{}\textbackslash{}}
+\hlcom{# system.time(matrix(rnorm(3000^2),3000)%*%matrix(rnorm(3000^2),3000))\textbackslash{}\textbackslash{} This is an}
+\hlcom{# information matrix when n = 3000\textbackslash{}\textbackslash{}}
+\hlstd{infor1} \hlkwb{<-} \hlkwd{matrix}\hlstd{(}\hlnum{0}\hlstd{,} \hlnum{8}\hlstd{,} \hlnum{3}\hlstd{)}
+\hlkwd{colnames}\hlstd{(infor1)} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlstr{"threads"}\hlstd{,} \hlstr{"expected time"}\hlstd{,} \hlstr{"elapsed time"}\hlstd{)}
+\hlstd{infor1[,} \hlnum{1}\hlstd{]} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlnum{1}\hlopt{:}\hlnum{8}\hlstd{)}
+\hlstd{infor1[,} \hlnum{3}\hlstd{]} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlnum{14.716}\hlstd{,} \hlnum{9.82}\hlstd{,} \hlnum{7.882}\hlstd{,} \hlnum{7.18}\hlstd{,} \hlnum{6.487}\hlstd{,} \hlnum{6.107}\hlstd{,} \hlnum{6.759}\hlstd{,} \hlnum{6.586}\hlstd{)}
+\hlstd{infor1[,} \hlnum{2}\hlstd{]} \hlkwb{<-} \hlstd{infor1[}\hlnum{1}\hlstd{,} \hlnum{3}\hlstd{]}\hlopt{/}\hlstd{infor1[,} \hlnum{1}\hlstd{]}
+\hlstd{infor1}
+\end{alltt}
+\begin{verbatim}
+##      threads expected time elapsed time
+## [1,]       1        14.716       14.716
+## [2,]       2         7.358        9.820
+## [3,]       3         4.905        7.882
+## [4,]       4         3.679        7.180
+## [5,]       5         2.943        6.487
+## [6,]       6         2.453        6.107
+## [7,]       7         2.102        6.759
+## [8,]       8         1.839        6.586
+\end{verbatim}
+\begin{alltt}
+\hlkwd{plot}\hlstd{(infor1[,} \hlnum{1}\hlstd{], infor1[,} \hlnum{2}\hlstd{],} \hlkwc{type} \hlstd{=} \hlstr{"b"}\hlstd{,} \hlkwc{col} \hlstd{=} \hlstr{"blue"}\hlstd{,} \hlkwc{xlab} \hlstd{=} \hlstr{"Number of threads"}\hlstd{,} \hlkwc{ylab} \hlstd{=} \hlstr{"Time(seconds)"}\hlstd{,}
+    \hlkwc{main} \hlstd{=} \hlstr{"3000*3000 matrix multiplication"}\hlstd{)}
+\hlkwd{lines}\hlstd{(infor1[,} \hlnum{1}\hlstd{], infor1[,} \hlnum{3}\hlstd{],} \hlkwc{type} \hlstd{=} \hlstr{"b"}\hlstd{,} \hlkwc{col} \hlstd{=} \hlstr{"red"}\hlstd{,} \hlkwc{pch} \hlstd{=} \hlnum{4}\hlstd{)}
+\hlcom{# The plot is in last 3 pages}
+\hlcom{# !/usr/bin/Rscript\textbackslash{}\textbackslash{} system.time(matrix(rnorm(2000^2),2000)%*%matrix(rnorm(2000^2),2000))\textbackslash{}\textbackslash{}}
+\hlcom{# This is an information matrix when n = 2000\textbackslash{}\textbackslash{}}
+\hlstd{infor2} \hlkwb{<-} \hlkwd{matrix}\hlstd{(}\hlnum{0}\hlstd{,} \hlnum{8}\hlstd{,} \hlnum{3}\hlstd{)}
+\hlkwd{colnames}\hlstd{(infor2)} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlstr{"threads"}\hlstd{,} \hlstr{"expected time"}\hlstd{,} \hlstr{"elapsed time"}\hlstd{)}
+\hlstd{infor2[,} \hlnum{1}\hlstd{]} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlnum{1}\hlopt{:}\hlnum{8}\hlstd{)}
+\hlstd{infor2[,} \hlnum{3}\hlstd{]} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlnum{5.048}\hlstd{,} \hlnum{3.544}\hlstd{,} \hlnum{3.027}\hlstd{,} \hlnum{2.785}\hlstd{,} \hlnum{2.641}\hlstd{,} \hlnum{2.529}\hlstd{,} \hlnum{2.598}\hlstd{,} \hlnum{2.636}\hlstd{)}
+\hlstd{infor2[,} \hlnum{2}\hlstd{]} \hlkwb{<-} \hlstd{infor2[}\hlnum{1}\hlstd{,} \hlnum{3}\hlstd{]}\hlopt{/}\hlstd{infor2[,} \hlnum{1}\hlstd{]}
+\hlstd{infor2}
+\end{alltt}
+\begin{verbatim}
+##      threads expected time elapsed time
+## [1,]       1        5.0480        5.048
+## [2,]       2        2.5240        3.544
+## [3,]       3        1.6827        3.027
+## [4,]       4        1.2620        2.785
+## [5,]       5        1.0096        2.641
+## [6,]       6        0.8413        2.529
+## [7,]       7        0.7211        2.598
+## [8,]       8        0.6310        2.636
+\end{verbatim}
+\begin{alltt}
+\hlkwd{plot}\hlstd{(infor2[,} \hlnum{1}\hlstd{], infor2[,} \hlnum{2}\hlstd{],} \hlkwc{type} \hlstd{=} \hlstr{"b"}\hlstd{,} \hlkwc{col} \hlstd{=} \hlstr{"blue"}\hlstd{,} \hlkwc{xlab} \hlstd{=} \hlstr{"Number of threads"}\hlstd{,} \hlkwc{ylab} \hlstd{=} \hlstr{"Time(seconds)"}\hlstd{,}
+    \hlkwc{main} \hlstd{=} \hlstr{"2000*2000 matrix multiplication"}\hlstd{)}
+\hlkwd{lines}\hlstd{(infor2[,} \hlnum{1}\hlstd{], infor2[,} \hlnum{3}\hlstd{],} \hlkwc{type} \hlstd{=} \hlstr{"b"}\hlstd{,} \hlkwc{col} \hlstd{=} \hlstr{"red"}\hlstd{,} \hlkwc{pch} \hlstd{=} \hlnum{4}\hlstd{)}
+\hlcom{# The plot is in the last 3 pages}
+\hlcom{# b).}
+\hlkwd{require}\hlstd{(parallel)}
+\end{alltt}
+
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Loading required package: parallel}}\begin{alltt}
+\hlkwd{require}\hlstd{(doParallel)}
+\end{alltt}
+
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Loading required package: doParallel\\\#\# Loading required package: foreach\\\#\# Loading required package: iterators}}\begin{alltt}
+\hlkwd{library}\hlstd{(foreach)}
+\hlkwd{library}\hlstd{(iterators)}
+\hlkwd{library}\hlstd{(rbenchmark)}
+\hlstd{nCores} \hlkwb{<-} \hlnum{2}
+\hlkwd{registerDoParallel}\hlstd{(nCores)}
+\hlcom{# I used 2000*2000 matrix to do this problem, and I tried 4000*4000 matrix using the same code}
+\hlcom{# on arwen.}
+\hlstd{a} \hlkwb{<-} \hlkwd{matrix}\hlstd{(}\hlkwd{rnorm}\hlstd{(}\hlnum{2000}\hlopt{^}\hlnum{2}\hlstd{),} \hlnum{2000}\hlstd{)}
+\hlstd{b} \hlkwb{<-} \hlkwd{matrix}\hlstd{(}\hlkwd{rnorm}\hlstd{(}\hlnum{2000}\hlopt{^}\hlnum{2}\hlstd{),} \hlnum{2000}\hlstd{)}
+\hlstd{sample} \hlkwb{<-} \hlkwd{seq}\hlstd{(}\hlnum{1}\hlstd{,} \hlnum{2000}\hlstd{,} \hlkwc{by} \hlstd{=} \hlnum{250}\hlstd{)}
+\hlstd{out} \hlkwb{<-} \hlkwd{foreach}\hlstd{(}\hlkwc{i} \hlstd{= sample,} \hlkwc{.combine} \hlstd{= cbind)} \hlopt{%dopar%} \hlstd{\{}
+    \hlstd{t} \hlkwb{<-} \hlstd{a} \hlopt{%*%} \hlstd{b[, i}\hlopt{:}\hlstd{(i} \hlopt{+} \hlnum{249}\hlstd{)]}
+\hlstd{\}}
+\hlkwd{benchmark}\hlstd{(}\hlkwd{foreach}\hlstd{(}\hlkwc{i} \hlstd{= sample,} \hlkwc{.combine} \hlstd{= cbind)} \hlopt{%dopar%} \hlstd{\{}
+    \hlstd{t} \hlkwb{<-} \hlstd{a} \hlopt{%*%} \hlstd{b[, i}\hlopt{:}\hlstd{(i} \hlopt{+} \hlnum{249}\hlstd{)]}
+\hlstd{\}, a} \hlopt{%*%} \hlstd{b,} \hlkwc{replications} \hlstd{=} \hlnum{10}\hlstd{,} \hlkwc{columns} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{1}\hlopt{:}\hlnum{5}\hlstd{))}
+\end{alltt}
+\begin{verbatim}
+##                                                                                  test
+## 2                                                                             a %*% b
+## 1 foreach(i = sample, .combine = cbind) %dopar% {\n    t <- a %*% b[, i:(i + 249)]\n}
+##   replications user.self sys.self elapsed
+## 2           10    67.050    0.250   67.80
+## 1           10     0.799    0.879   43.59
+\end{verbatim}
+\begin{alltt}
+\hlkwd{identical}\hlstd{(a} \hlopt{%*%} \hlstd{b, out)}
+\end{alltt}
+\begin{verbatim}
+## [1] TRUE
+\end{verbatim}
+\begin{alltt}
+
+# nCores = 1\\ user system elapsed\\ 13.565 0.104 13.675\\ user system elapsed\\ 16.265
+# 0.280 16.548\\ nCores = 2\\ user system elapsed\\ 13.509 0.092 13.604\\ user system
+# elapsed\\ 9.153 1.012 9.857\\ nCores = 4\\ user system elapsed\\ 13.385 0.080
+# 13.464\\ user system elapsed\\ 22.801 1.724 5.673\\ nCores = 6\\ user system
+# elapsed\\ 13.829 0.120 13.950\\ user system elapsed\\ 24.874 1.808 4.249\\ nCores =
+# 8\\ user system elapsed\\ 13.121 0.052 13.177\\ user system elapsed\\ 26.861 1.952
+# 3.502\\
+\end{alltt}
+\end{kframe}
+
+{\centering \includegraphics[width=\maxwidth]{figure/minimal-Problem_51} 
+\includegraphics[width=\maxwidth]{figure/minimal-Problem_52} 
+\includegraphics[width=\maxwidth]{figure/minimal-Problem_53} 
+
+}
+
+
+
+\end{knitrout}
+
+
+\end{document}
